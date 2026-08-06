@@ -1,0 +1,2 @@
+# pnpm run test
+pnpx lint-staged
