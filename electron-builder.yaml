@@ -23,7 +23,8 @@ npmRebuild: false
 
 mac:
   category: public.app-category.utilities
-  target: dmg
+  # electron-updater downloads the zip on macOS; dmg alone breaks auto-update.
+  target: [dmg, zip]
 
 win:
   target: nsis
