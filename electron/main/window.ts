@@ -4,6 +4,28 @@ import { fileURLToPath } from 'node:url';
 import log from './logger.ts';
 
 const dirname = fileURLToPath(new URL('.', import.meta.url));
+const externalProtocols = new Set(['http:', 'https:']);
+
+function parseUrl(url: string): URL | null {
+  try {
+    return new URL(url);
+  } catch {
+    return null;
+  }
+}
+
+function openExternalUrl(url: string): void {
+  const target = parseUrl(url);
+
+  if (target === null || !externalProtocols.has(target.protocol)) {
+    log.warn(`electron/window: blocked external url ${url}`);
+    return;
+  }
+
+  shell
+    .openExternal(url)
+    .catch((error: unknown) => log.error('electron/window: failed to open external url', error));
+}
 
 export function createMainWindow(): BrowserWindow {
   const mainWindow = new BrowserWindow({
@@ -23,23 +45,18 @@ export function createMainWindow(): BrowserWindow {
   mainWindow.once('ready-to-show', () => mainWindow.show());
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell
-      .openExternal(details.url)
-      .catch((error: unknown) => log.error('electron/window: failed to open external url', error));
-
+    openExternalUrl(details.url);
     return { action: 'deny' };
   });
 
   mainWindow.webContents.on('will-navigate', (event, url) => {
-    const target = new URL(url);
-    const current = new URL(mainWindow.webContents.getURL());
+    const target = parseUrl(url);
+    const current = parseUrl(mainWindow.webContents.getURL());
 
-    if (target.origin === current.origin) return;
+    if (target !== null && current !== null && target.origin === current.origin) return;
 
     event.preventDefault();
-    shell
-      .openExternal(url)
-      .catch((error: unknown) => log.error('electron/window: failed to open external url', error));
+    openExternalUrl(url);
   });
 
   return mainWindow;
