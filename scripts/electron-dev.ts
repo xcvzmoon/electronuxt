@@ -7,7 +7,8 @@ const isWindows = process.platform === 'win32';
 const localUrlPattern = /Local:\s+(http:\/\/\S+)/;
 
 function stripAnsi(text: string): string {
-  return text.replaceAll(/\[[0-9;]*m/g, '');
+  // oxlint-disable-next-line no-control-regex
+  return text.replaceAll(/\u001B\[[0-9;]*m/g, '');
 }
 
 function killTree(child: ChildProcess): void {
@@ -40,13 +41,16 @@ async function waitForNuxtUrl(nuxt: ChildProcess): Promise<string> {
 
   return new Promise((resolve, reject) => {
     let resolved = false;
+    let buffered = '';
 
     function onData(chunk: Buffer): void {
       process.stdout.write(chunk);
 
       if (resolved) return;
 
-      const match = localUrlPattern.exec(stripAnsi(chunk.toString()));
+      buffered += stripAnsi(chunk.toString());
+
+      const match = localUrlPattern.exec(buffered);
 
       if (match) {
         const [, url] = match;
