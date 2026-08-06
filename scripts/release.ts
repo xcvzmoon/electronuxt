@@ -47,7 +47,7 @@ const packageJson = v.parse(packageJsonSchema, JSON.parse(await readFile('packag
 const nextVersion = computeNextVersion(packageJson.version, releaseType);
 const tag = `v${nextVersion}`;
 
-run('pnpx', ['changelogen', '-r', nextVersion, '--bump']);
+run('pnpm', ['exec', 'changelogen', '-r', nextVersion, '--bump']);
 run('git', ['add', 'package.json', 'CHANGELOG.md']);
 run('git', ['commit', '-m', `chore(release): ${tag}`]);
 run('git', ['tag', '-a', tag, '-m', tag]);
