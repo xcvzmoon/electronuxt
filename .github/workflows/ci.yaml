@@ -70,10 +70,27 @@ jobs:
       - name: Build
         run: pnpm run build
 
+  build-electron:
+    name: Build Electron
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+
+      - name: Build Nuxt server
+        run: pnpm run build
+
+      - name: Build Electron main/preload
+        run: pnpm run build:electron
+
   ci:
     name: CI
     if: always()
-    needs: [lint, format, typecheck, build]
+    needs: [lint, format, typecheck, build, build-electron]
     runs-on: ubuntu-latest
     steps:
       - name: Check job results

@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "electron": {
+      "source": "full-stack-skills/electron-skills",
+      "sourceType": "github",
+      "skillPath": "skills/electron/SKILL.md",
+      "computedHash": "2fa0c3292a8b844fbd9a6947e6816616be8996051e547514c95f6416f67cfc93"
+    },
     "emil-design-eng": {
       "source": "emilkowalski/skills",
       "sourceType": "github",

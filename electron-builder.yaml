@@ -1,0 +1,38 @@
+appId: com.xcvzmoon.electronuxt
+
+productName: electronuxt
+
+directories:
+  output: .electron/release
+  buildResources: build
+
+files:
+  - .electron/dist/**/*
+  - package.json
+  - '!node_modules/**/*'
+
+extraResources:
+  - from: .output/server
+    to: server
+  - from: .output/server/node_modules
+    to: server/node_modules
+  - from: .output/public
+    to: public
+
+npmRebuild: false
+
+mac:
+  category: public.app-category.utilities
+  target: dmg
+
+win:
+  target: nsis
+
+linux:
+  target: AppImage
+  category: Utility
+
+publish:
+  provider: github
+  owner: xcvzmoon
+  repo: electronuxt
