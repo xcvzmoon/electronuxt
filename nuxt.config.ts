@@ -14,6 +14,9 @@ export default defineNuxtConfig({
   colorMode: {
     classSuffix: '',
   },
+  runtimeConfig: {
+    electronApiToken: '',
+  },
   devtools: {
     enabled: true,
   },
